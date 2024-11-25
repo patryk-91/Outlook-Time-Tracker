@@ -1,9 +1,9 @@
 VERSION 5.00
 Begin {C62A69F0-16DC-11CE-9E98-00AA00574A4F} frmNewAppointment 
    Caption         =   "New Appointment"
-   ClientHeight    =   2142
-   ClientLeft      =   91
-   ClientTop       =   406
+   ClientHeight    =   2140
+   ClientLeft      =   90
+   ClientTop       =   410
    ClientWidth     =   5880
    OleObjectBlob   =   "frmNewAppointment.frx":0000
    StartUpPosition =   1  'CenterOwner
@@ -22,10 +22,10 @@ Public Property Get IsCancelled() As Boolean
 End Property
 Private Sub OnCancel()
     cancelled = True
-    hide
+    Hide
 End Sub
 Private Sub btnOK_Click()
-    hide
+    Hide
 End Sub
 Private Sub cmbTopic_KeyPress(ByVal KeyAscii As MSForms.ReturnInteger)
     If KeyAscii = 27 Then

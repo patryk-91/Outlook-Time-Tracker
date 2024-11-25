@@ -1,6 +1,9 @@
 Attribute VB_Name = "modCalendar"
 Public Const SEARCH_TAG As String = "last7days"
 Public IsSearchCompleted As Boolean
+Public Sub Start()
+    Call Appointment_Add
+End Sub
 Public Sub Appointment_Add(Optional topic As String)
     Dim now_time As Date
     Dim last_appointment As Object
@@ -74,4 +77,65 @@ Public Function GetLastAppointments() As Variant
     Set search_table = search_result.GetTable
     GetLastAppointments = search_table.GetArray(search_table.GetRowCount)
 End Function
-
+Public Sub Appointments_Export()
+    Dim xlApp As Object
+    Dim wb As Object
+    Dim ws As Object
+    Dim olNS As NameSpace
+    Dim olCalendar As Folder
+    Dim itms As Items
+    Dim filtered_items As Items
+    Dim olApt As AppointmentItem
+    Dim txtFrom As String
+    Dim txtTo As String
+    With New frmDates
+        .lblFrom.Caption = Format(Date - 7, "dd/mm/yyyy")
+        .lblTo.Caption = Format(Date, "dd/mm/yyyy")
+        .Show
+        If .IsCancelled Then
+            Exit Sub
+        End If
+        txtFrom = .lblFrom.Caption
+        txtTo = .lblTo.Caption
+    End With
+On Error Resume Next
+    Set xlApp = GetObject(, "Excel.Application")
+    If xlApp Is Nothing Then Set xlApp = CreateObject("Excel.Application")
+    xlApp.screenupdating = False
+On Error GoTo 0
+    Set wb = xlApp.workbooks.Add
+    Set ws = wb.sheets(1)
+    Set olNS = Application.GetNamespace("MAPI")
+    Set olCalendar = olNS.GetDefaultFolder(olFolderCalendar)
+    'browse calendar
+    Set itms = olCalendar.Items
+        itms.Sort "[Start]", False
+        itms.IncludeRecurrences = True
+        filter_string = "[Start] >= '" & txtFrom & " 00:00' and [End] <= '" & txtTo & " 00:00'"
+    Set filtered_items = itms.Restrict(filter_string)
+    'write results
+    ws.Range("A1") = "Topic"
+    ws.Range("B1") = "Start"
+    ws.Range("C1") = "Duration [min]"
+    ws.Range("D1") = "End"
+    NextRow = 2
+    For Each olApt In filtered_items
+        ws.Range("A" & NextRow).Value = olApt.ConversationTopic
+        ws.Range("B" & NextRow).Value = olApt.Start
+        ws.Range("C" & NextRow).Value = olApt.Duration
+        ws.Range("D" & NextRow).Value = olApt.End
+        NextRow = NextRow + 1
+    Next
+    If NextRow > 2 Then
+        With ws.Range("A1:D" & NextRow - 1)
+            .Borders.Weight = xlThin
+            .Columns.AutoFit
+        End With
+        xlApp.Visible = True
+        xlApp.screenupdating = True
+        MsgBox "Exported successfully", vbInformation, "Time Tracker"
+    Else
+        wb.Close False
+        MsgBox "No appointments found", vbExclamation
+    End If
+End Sub
