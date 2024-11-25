@@ -4,7 +4,7 @@
 Outlook add-in to track time in Outlook calendar.
 
 ## Install
-1. Download 3 files
+1. Download 6 files
 2. Open Outlook Desktop Application
 4. Open VBE Editor (Alt+F11)
 5. Import files:
