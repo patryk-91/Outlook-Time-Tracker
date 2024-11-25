@@ -9,7 +9,7 @@ Outlook add-in to track time in Outlook calendar.
 4. Open VBE Editor (Alt+F11)
 5. Import files:
 
-![image](https://github.com/user-attachments/assets/d39886c5-a45a-4e14-8080-d6a96a158657)
+<img width="184" alt="image" src="https://github.com/user-attachments/assets/69facbd7-3459-455c-aa5d-6ae992647c89">
 
 7. Save the project
 8. Right-click the ribbon in Outlook:
